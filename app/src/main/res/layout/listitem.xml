@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/colorTestGrey">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border">
 
     <TextView
         android:id="@+id/tvLabPercent"
@@ -33,14 +35,13 @@
 
     <TextView
         android:id="@+id/tvLabSched"
-        android:layout_width="276dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvLabNumber"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
         android:layout_marginStart="36dp"
         android:layout_marginTop="6dp"
-        android:layout_marginEnd="99dp"
+        android:paddingBottom="8dp"
         android:text="Class"
         android:textAlignment="viewStart"
         android:textColor="@android:color/darker_gray"
@@ -54,8 +55,8 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="12dp"
         android:layout_toEndOf="@+id/tvLabPercent"
-        android:checked="false"
         android:background="@drawable/btn_unfavorite"
+        android:checked="false"
         android:textOff=""
         android:textOn="" />
 

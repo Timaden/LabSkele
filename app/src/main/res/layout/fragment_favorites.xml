@@ -10,11 +10,12 @@
     <ExpandableListView
         android:id="@+id/listViewFavorites"
         android:layout_width="match_parent"
-        android:layout_height="440dp"
+        android:layout_height="600dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="50dp"
+        android:background="@color/colorGeorgiaSouthernBlue"
         android:divider="@color/colorPrimaryDark"
         android:dividerHeight="8dp"
         android:focusable="auto"
@@ -23,6 +24,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Search"
-        android:background="@color/colorGeorgiaSouthernBlue"/>S
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
