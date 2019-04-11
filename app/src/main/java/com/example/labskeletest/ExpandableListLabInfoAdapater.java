@@ -1,7 +1,6 @@
 package com.example.labskeletest;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.constraint.ConstraintLayout;
 import android.view.Gravity;
@@ -9,16 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,40 +75,28 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View view, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
-        if(view == null){
-            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.listview_textview, null);
-//            if(groupPosition == 0){
-//                view = setUpLabName(view);
-//            }
-//            else if (groupPosition ==1){
-//                view = setUpOccupancy(view);
-//            }
-//            else if (groupPosition ==2){
-//                view = setUpPrinter(view);
-//            }
-//            else if (groupPosition ==3){
-//                view = setUpLabHours(view);
-//            }
-//            else if (groupPosition ==4){
-            view.setBackgroundColor(context.getResources().getColor(R.color.colorGeorgiaSouthernGold));
-            if (groupPosition ==4){
-                view = setUpSoftware(view);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        labSoftwareClicked(v, lab);
-                    }
-                });
-            }
-        }
+        //}
+        System.out.println("Header Title: " + headerTitle + " Group Position: " + groupPosition);
 
         TextView listLabel = (TextView) view.findViewById(R.id.lvHeaders);
-
-        listLabel.setTypeface(null , Typeface.BOLD);
+        listLabel.setTypeface(null, Typeface.BOLD);
         listLabel.setText(headerTitle);
+        view.setBackgroundColor(context.getResources().getColor(R.color.colorGeorgiaSouthernGold));
         System.out.println(groupPosition + "---GROUP POSITION---- " + headerTitle);
 
+//            if (groupPosition == 4){
+//                //view = setUpSoftware(view);
+//                view.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        labSoftwareClicked(v, lab);
+//                    }
+//                });
+//            }
+    }//
         return view;
 
     }
@@ -154,7 +139,7 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
                 childLabel.setText(childText);
             }
 //        }
-        view.setBackgroundColor(context.getResources().getColor(R.color.colorTestGrey));
+        view.setBackgroundColor(context.getResources().getColor(R.color.colorGeorgiaSouthernBlue));
 
        return view;
     }
@@ -209,12 +194,20 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
         boolean classInSession = lab.checkClassInSession(currentTime);
         TextView classInSessionTV = view.findViewById(R.id.tvLabSched2);
         if(classInSession == true){
-            classInSessionTV.setText("Status: IN USE!");
+            classInSessionTV.setText("IN CLASS");    /*"Status: IN USE!"*/
             classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorRed));
         }
-        else{
-            classInSessionTV.setText("Status: OPEN!");
+        else {
+            System.out.println(lab.getRoom());
+            if (lab.getRoom().equals("CEIT2551202") || lab.getRoom().equals("CEIT2551204")) {
+                System.out.println("lab is 1202 or 1204");
+                classInSessionTV.setText("EAGLE LAB");      /*"Status: OPEN!"*/
+                classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+            } else {
+
+            classInSessionTV.setText("OPEN");      /*"Status: OPEN!"*/
             classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+            }
         }
     }
 
@@ -289,12 +282,23 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
         for(int i = 0; i < softwareList.size(); i ++){
             System.out.println(softwareList.get(i));
         }
-        View softwarePopup = (View) inflater.inflate(R.layout.popup_listview,null);
-        ListView softwareListView = (ListView) softwarePopup.findViewById(R.id.popup_listview_);
-        PopupWindow mPopupWindow = new PopupWindow(softwarePopup, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-        popupListViewAdapter adapter = new popupListViewAdapter(context,softwareList);
+        final View popup_listview = (View) inflater.inflate(R.layout.popup_listview,null);
+        ListView softwareListView = (ListView) popup_listview.findViewById(R.id.softwareListView);
+        final PopupWindow mPopupWindow = new PopupWindow(popup_listview, ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
+        labInfoListViewAdapter adapter = new labInfoListViewAdapter(context,softwareList);
 
         softwareListView.setAdapter(adapter);
         mPopupWindow.showAtLocation(view, Gravity.CENTER,0,0);
+
+        //Create listener for exit button
+        ImageView popup_closeButton = (ImageView) popup_listview.findViewById(R.id.popup_btnClose);
+        popup_closeButton.setClickable(true);
+        popup_closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                ((ViewGroup) v.getParent()).removeView(mPopupWindow);
+                mPopupWindow.dismiss();
+            }
+        });
     }
 }

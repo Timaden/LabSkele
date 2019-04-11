@@ -3,6 +3,7 @@ package com.example.labskeletest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         listLabel.setTypeface(null , Typeface.BOLD);
         listLabel.setText(headerTitle);
         view.setBackgroundColor(context.getResources().getColor(R.color.colorGeorgiaSouthernGold));
+
         return view;
     }
 
@@ -115,9 +117,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         favoriteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Favorite has been clicked. Lab room:" + child.getRoom());
-
-                System.out.println("Child.getRoom ----" + child.getRoom());
                 if(favoriteBtn.isChecked()) {
                     favoriteBtn.setBackgroundResource(R.drawable.btn_favorite);
                     String UUID = MainActivity.uniqueID;
@@ -146,12 +145,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         boolean classInSession = child.checkClassInSession(currentTime);
         TextView classInSessionTV = view.findViewById(R.id.tvLabSched);
         if(classInSession == true){
-            classInSessionTV.setText("Status: IN USE!");
+            classInSessionTV.setText("IN CLASS");        /*"Status: IN USE!"*/
             classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorRed));
+            percentLabel.setText("--/--");
+            percentLabel.setTextColor(context.getResources().getColor(R.color.colorWhite));
         }
-        else{
-            classInSessionTV.setText("Status: OPEN!");
-            classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+        else {
+            if (child.getRoom().equals("CEIT2551202") || child.getRoom().equals("CEIT2551204")) {
+                classInSessionTV.setText("EAGLE LAB");      /*"Status: OPEN!"*/
+                classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+            } else {
+
+                classInSessionTV.setText("OPEN");      /*"Status: OPEN!"*/
+                classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+            }
         }
         return view;
     }

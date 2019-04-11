@@ -4,16 +4,29 @@ import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
-import static com.example.labskeletest.MainActivity.listOfLabs;
+
 
 public class LabInformation extends AppCompatActivity {
     private ExpandableListView listView;
@@ -29,6 +42,7 @@ public class LabInformation extends AppCompatActivity {
     DBConfiguration dbc = new DBConfiguration();
     DBAccess db = new DBAccess();
     ResultSet computersRS;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,22 +59,24 @@ public class LabInformation extends AppCompatActivity {
         listView.setAdapter(listAdapter);
 
     }
-    public void initData(){
+
+
+    public void initData() {
 
         listHashMap = new HashMap<String, java.util.List<String>>();
         listBuildingHeader = new ArrayList<>();
 
         listBuildingHeader.add("Lab " + passedLab);
         ArrayList<String> listLabHeader = populateLabHeader();
-        listHashMap.put(listBuildingHeader.get(0),listLabHeader);
+        listHashMap.put(listBuildingHeader.get(0), listLabHeader);
 
         listBuildingHeader.add("Occupancy");
         ArrayList<String> listOccupancy = populateLabList(listBuildingHeader.get(1));
-        listHashMap.put(listBuildingHeader.get(1),listOccupancy);
+        listHashMap.put(listBuildingHeader.get(1), listOccupancy);
 
         listBuildingHeader.add("Printer:");
         ArrayList<String> listPrinter = populatePrinter();
-        listHashMap.put(listBuildingHeader.get(2),listPrinter);
+        listHashMap.put(listBuildingHeader.get(2), listPrinter);
 
         listBuildingHeader.add("Class Hours:");
         ArrayList<String> listOfHours = populateHours();
@@ -70,12 +86,14 @@ public class LabInformation extends AppCompatActivity {
         ArrayList<String> listOfSoftware = populateSoftware();
         listHashMap.put(listBuildingHeader.get(4), listOfSoftware);
     }
-    public ArrayList<String> populateSoftware( ){
+
+    public ArrayList<String> populateSoftware() {
 
         ArrayList<String> softwareList = lab.getSoftware();
         return softwareList;
     }
-    public ArrayList<String> populateHours( ){
+
+    public ArrayList<String> populateHours() {
         ArrayList<String> listOfHours = new ArrayList<>();
         ArrayList<String> listOfStart = lab.getClassStart();
         ArrayList<String> listOfEnd = lab.getClassEnd();
@@ -105,24 +123,93 @@ public class LabInformation extends AppCompatActivity {
                 day_of_week = "S";
                 break;
         }
-        for(int i =0; i < listOfStart.size();i++){
-            if(listOfDay.get(i).contains(day_of_week)){
-                listOfHours.add(listOfStart.get(i) + " - "+ listOfEnd.get(i));
+
+        ArrayList<String> listOfHoursSortedStart = new ArrayList<>();
+        for (int i = 0; i < listOfStart.size(); i++) {
+            if (listOfDay.get(i).contains(day_of_week)) {
+                String full = listOfStart.get(i);
+                String start = listOfStart.get(i).substring(0,listOfStart.get(i).length() - 1);
+                String ampm = full.substring(full.length() - 1, full.length());
+                char first = start.charAt(0);
+                String c = String.valueOf(first);
+                if(c.equals("0")){
+                    start = start.substring(1,start.length());
+                }
+                listOfHoursSortedStart.add(start + " " + ampm + "m");
             }
+        }
+        Collections.sort(listOfHoursSortedStart, new Comparator<String>() {
+
+            @Override
+            public int compare(String o1, String o2) {
+                try {
+                    return new SimpleDateFormat("hh:mm a").parse(o1).compareTo(new SimpleDateFormat("hh:mm a").parse(o2));
+                } catch (ParseException e) {
+                    return 0;
+                }
+            }
+        });
+        ArrayList<String> listOfHoursSortedEnd = new ArrayList<>();
+        for (int i = 0; i < listOfEnd.size(); i++) {
+            if (listOfDay.get(i).contains(day_of_week)) {
+                String full = listOfEnd.get(i);
+                String end = listOfEnd.get(i).substring(0,listOfEnd.get(i).length() - 1);
+                String ampm = full.substring(full.length() - 1, full.length());
+                char first = end.charAt(0);
+                String c = String.valueOf(first);
+                if(c.equals("0")){
+                    end = end.substring(1,end.length());
+                }
+                listOfHoursSortedEnd.add(end + " " + ampm + "m");
+            }
+        }
+        Collections.sort(listOfHoursSortedEnd, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                try {
+                    return new SimpleDateFormat("hh:mm a").parse(o1).compareTo(new SimpleDateFormat("hh:mm a").parse(o2));
+                } catch (ParseException e) {
+                    return 0;
+                }
+            }
+        });
+
+
+        for(int i =0; i < listOfHoursSortedStart.size(); i ++){
+            listOfHours.add(listOfHoursSortedStart.get(i) + " - " + listOfHoursSortedEnd.get(i));
+            System.out.println(listOfHours.get(i).toString());
+        }
+        if(listOfHours.isEmpty()){
+            listOfHours.add("No classes scheduled today.");
         }
         return listOfHours;
     }
-    public ArrayList<String> populateLabHeader( ){
+
+    public ArrayList<String> populateLabHeader() {
         ArrayList<String> listOfHeader = new ArrayList<String>();
-        listOfHeader.add("The IT Building opens at 8:00 am and closes at 12:00 Midnight. Call 111-222-3333 for questions.");
+        if(lab.getRoom().contains("CEIT")){
+            listOfHeader.add("CEIT Building Hours:");
+            listOfHeader.add("M - TR: 7:00 am - Midnight");
+            listOfHeader.add("F: 7:00 am - 10:00 pm");
+            listOfHeader.add("Sat: 2:00 pm - 10:00 pm");
+            listOfHeader.add("Sun: 2:00 pm - Midnight");
+
+        }
+        else if (lab.getRoom().contains("COBA")){
+            listOfHeader.add("COBA Building Hours:");
+            listOfHeader.add("M - TR: 7:30 am - 9:00 pm");
+            listOfHeader.add("Sat - Sun: CLOSED");
+        }
         return listOfHeader;
     }
-    public ArrayList<String> populatePrinter( ){
+
+    public ArrayList<String> populatePrinter() {
         ArrayList<String> listOfPrinter = new ArrayList<String>();
         listOfPrinter.add("This lab has a double sided printer!");
         return listOfPrinter;
     }
-    public ArrayList<String> populateLabList(String building){
+
+    public ArrayList<String> populateLabList(String building) {
         ArrayList<String> listOfLabs = new ArrayList<String>();
         String a = Integer.toString(inUseComputers);
         String b = Integer.toString(totalComputers);
@@ -130,6 +217,7 @@ public class LabInformation extends AppCompatActivity {
         listOfLabs.add(c);
         return listOfLabs;
     }
+
     public void loadLabOccupancy() {
         inUseComputers = lab.getInUseComputers();
         presetTotalComputers = lab.getPresetTotalComputers();

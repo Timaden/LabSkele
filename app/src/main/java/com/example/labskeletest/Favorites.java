@@ -83,17 +83,12 @@ public class Favorites extends Fragment {
         testList = container.findViewById(R.id.listViewFavorites);
 
         // Inflate the layout for this fragment
-        inflatedView = inflater.inflate(R.layout.fragment_list, container, false);
-        listView = (ExpandableListView) inflatedView.findViewById(R.id.listView);
+        inflatedView = inflater.inflate(R.layout.fragment_favorites, container, false);
+        listView = (ExpandableListView) inflatedView.findViewById(R.id.listViewFavorites);
         initData();
         listAdapter = new ExpandableListAdapter(getActivity(), listBuildingHeader, listHashMap);
         listView.setAdapter(listAdapter);
 
-        /*try {
-            test();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
 
         return inflatedView;
         //return inflater.inflate(R.layout.fragment_favorites, container, false);
@@ -146,27 +141,21 @@ public class Favorites extends Fragment {
 
         listBuildingHeader.add("Favorites");
         ArrayList<Lab> listOfFavoritedLabs = new ArrayList<Lab>();
-        for(int i =0; i < MainActivity.listOfFavorites.size();i++){
-            for(int j = 0; j < MainActivity.listOfLabs.size();j++) {
-                if (MainActivity.listOfFavorites.get(i).contains(MainActivity.listOfLabs.get(j).getRoom())) {
-                    listOfFavoritedLabs.add(MainActivity.listOfLabs.get(j));
-
+        for(int i =0; i < MainActivity.listOfFavorites.size();i++) {
+            for (int j = 0; j < MainActivity.listOfLabsCEIT.size(); j++) {
+                if (MainActivity.listOfFavorites.get(i).contains(MainActivity.listOfLabsCEIT.get(j).getRoom())) {
+                    listOfFavoritedLabs.add(MainActivity.listOfLabsCEIT.get(j));
+                }
+            }
+            for (int j = 0; j < MainActivity.listOfLabsCOBA.size(); j++) {
+                if (MainActivity.listOfFavorites.get(i).contains(MainActivity.listOfLabsCOBA.get(j).getRoom())) {
+                    listOfFavoritedLabs.add(MainActivity.listOfLabsCOBA.get(j));
                 }
             }
         }
-
         listHashMap.put(listBuildingHeader.get(0),listOfFavoritedLabs);
 
-
-
-
     }
 
-    public ArrayList<Lab> populateFavoritesList(String userID){
 
-        ArrayList<Lab> listOfLabs = new ArrayList<Lab>();
-
-
-        return listOfLabs;
-    }
 }

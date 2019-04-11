@@ -1,15 +1,18 @@
 package com.example.labskeletest;
 
+import android.database.Cursor;
 import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +27,7 @@ public class Lab implements Serializable {
     private int inUseComputers;
     private int totalComputers;
     private int presetTotalComputers;
+    private boolean printerStatus;
 
 
     Lab(String labRoom) {
@@ -38,37 +42,25 @@ public class Lab implements Serializable {
 
     public void getItemStatus() throws SQLException {
 
-        DBAccess dba = new DBAccess();
-        ResultSet occupancy = dba.getOccupancy(room);
-
-        occupancy.next();
-        inUseComputers = occupancy.getInt("InUse");
-
-        occupancy = dba.getTotalComputers(room);
-
-        occupancy.next();
-        totalComputers = occupancy.getInt("Total");
-
-        occupancy = dba.getPreSetTotalComputers(room);
-
-        occupancy.next();
-        presetTotalComputers = occupancy.getInt("Total");
-
-        occupancy = dba.getSoftware(room);
-
-        occupancy.next();
-        while (occupancy.next()) {
-            String software = occupancy.getString("Name");
-            softwareList.add(software);
+        Cursor data = MainActivity.databaseHelper.getLabStatus(room);
+        while(data.moveToNext()){
+            String inUse = data.getString(0);
+            String total = data.getString(1);
+            String preset = data.getString(2);
+            inUseComputers = Integer.parseInt(inUse);
+            totalComputers = Integer.parseInt(total);
+            presetTotalComputers = Integer.parseInt(preset);
         }
+        data = MainActivity.databaseHelper.getSoftware(room);
+        while(data.moveToNext()){
+            softwareList.add(data.getString(0));
+        }
+        data = MainActivity.databaseHelper.getClassTimes(room);
+        while(data.moveToNext()){
 
-        occupancy = dba.getClassTimes(room);
-
-        occupancy.next();
-        while (occupancy.next()) {
-            String class_start = occupancy.getString("start_time");
-            String class_end = occupancy.getString("end_time");
-            String class_day = occupancy.getString("days");
+            String class_start = data.getString(0);
+            String class_end = data.getString(1);
+            String class_day = data.getString(3);
 
             class_start = formatTime(class_start);
             class_end = formatTime(class_end);
@@ -77,8 +69,6 @@ public class Lab implements Serializable {
             classEnd.add(class_end);
             classDay.add(class_day);
         }
-
-
     }
 
     public String formatTime(String correctFormat) {
@@ -110,7 +100,6 @@ public class Lab implements Serializable {
     }
 
     public boolean checkClassInSession(Calendar currentTime) {
-
         int day = currentTime.get(Calendar.DAY_OF_WEEK);
         String day_of_week = "";
         switch (day) {
@@ -137,11 +126,10 @@ public class Lab implements Serializable {
         }
 //        System.out.println(day_of_week + "DAY OF WEEK");
         for (int i = 0; i < classEnd.size(); i++) {
-            System.out.println("Day of Week of Class: " + classDay.get(i).toString());
-            System.out.println("Current Day: " + day_of_week);
+
             if (classDay.get(i).contains(day_of_week)) {
                 try {
-                    System.out.println("Same day, checking times");
+
                     String trimmedStart = classStart.get(i).substring(0, classStart.get(i).length() - 1);
                     String ampmStart = classStart.get(i).substring(classStart.get(i).length() - 1, classStart.get(i).length());
 
@@ -179,17 +167,13 @@ public class Lab implements Serializable {
                     Calendar calendar2 = Calendar.getInstance();
                     calendar2.setTime(endTime);
 
-                String currentTimeStringTest = "16:30";
-//                    String currentTimeStringTest = new SimpleDateFormat("HH:mm").format(new Date());
+
+                    String currentTimeStringTest = new SimpleDateFormat("HH:mm").format(new Date());
 
                     Date checkTime = new SimpleDateFormat("HH:mm").parse(currentTimeStringTest);
                     Calendar calendar3 = Calendar.getInstance();
                     calendar3.setTime(checkTime);
 
-
-                    System.out.println("Start Time: " + trimmedStart);
-                    System.out.println("Current Time: " + currentTimeStringTest);
-                    System.out.println("End Time: " + trimmedEnd);
 
                     if (endTime.compareTo(startTime) < 0) {
                         calendar2.add(Calendar.DATE, 1);
@@ -200,10 +184,10 @@ public class Lab implements Serializable {
                     if ((actualTime.after(calendar1.getTime()) ||
                             actualTime.compareTo(calendar1.getTime()) == 0) &&
                             actualTime.before(calendar2.getTime())) {
-                        System.out.println("Class is in Sessiion");
+
                         long differenceInMinutes = endTime.getTime() - startTime.getTime();
                         differenceInMinutes= differenceInMinutes/  (60 * 1000) % 60;
-                        System.out.println("Class Room open in " + differenceInMinutes + " minutes!");
+
                         return true;
                     }
                 } catch (ParseException e) {
@@ -216,7 +200,9 @@ public class Lab implements Serializable {
 
     public String getPercentage() {
 
-        String percentage = inUseComputers + "/" + totalComputers;
+        //String percentage = inUseComputers + "/" + totalComputers;
+        int difference = totalComputers - inUseComputers;
+        String percentage = Integer.toString(difference) + " Available";
         return percentage;
     }
 

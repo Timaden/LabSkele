@@ -102,39 +102,19 @@ public class List extends Fragment  {
         //ArrayList<Lab> listOfLabsIT = populateLabList("CEIT"/*listBuildingHeader.get(0)*/);
 
         MainActivity mainActivity = new MainActivity();
-        ArrayList<Lab> listOfLabsIT = MainActivity.listOfLabs;
+        ArrayList<Lab> listOfLabsCEIT = MainActivity.listOfLabsCEIT;
 
-        listHashMap.put(listBuildingHeader.get(0),listOfLabsIT);
+
+        listHashMap.put(listBuildingHeader.get(0),listOfLabsCEIT);
 
         listBuildingHeader.add("COBA Building");
-        ArrayList<Lab> listOfLabsCOBA = populateLabList("COBA"/*listBuildingHeader.get(1)*/);
 
+        ArrayList<Lab> listOfLabsCOBA = MainActivity.listOfLabsCOBA;
         listHashMap.put(listBuildingHeader.get(1),listOfLabsCOBA);
+
     }
 
-    public ArrayList<Lab> populateLabList(String building){
-
-        ArrayList<Lab> listOfLabs = new ArrayList<Lab>();
-        dba = new DBAccess();
-
-        try {
-                ResultSet rs = dba.getLabs(building);
-
-                while (rs.next()) {
-                    String lab = rs.getString("LabID");
-                    //lab = lab.substring(lab.length() - 4);
-
-                    listOfLabs.add(new Lab(lab));
-                }
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        return listOfLabs;
-    }
-
-    @Override
+      @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         testList = container.findViewById(R.id.listView);
@@ -145,21 +125,7 @@ public class List extends Fragment  {
         listAdapter = new ExpandableListAdapter(getActivity(), listBuildingHeader, listHashMap);
         listView.setAdapter(listAdapter);
 
-//        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//            @Override
-//            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-//                System.out.println("Lab Click listener has been engaged");
-//                ExpandableListAdapter eListAdapter = (ExpandableListAdapter)parent.getExpandableListAdapter();
-//                String item = (String) eListAdapter.getChild(groupPosition, childPosition);
-//                setLabClicked(item);
-//                return false;
-//            }
-//        });
-//        try {
-//            test();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+
         return inflatedView;
         //return inflater.inflate(R.layout.fragment_list, container, false);
     }
@@ -202,20 +168,5 @@ public class List extends Fragment  {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public void test() throws SQLException {
-        DBAccess dba = new DBAccess();
-        computersRS = dba.getComputers("1201");
-        ArrayList<Computer> listOfComputers = new ArrayList<Computer>();
-
-        if(computersRS == null){
-            //DO SOMETHING
-        }else{
-            while(computersRS.next()){
-
-
-            }
-        }
     }
 }

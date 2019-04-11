@@ -12,4 +12,5 @@
     <color name="colorGeorgiaSouthernGold">#87714D</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorGeorgiaSouthernLightBlue">#B4283885</color>
+    <color name="colorPopupTransparentBackground">#D8000000</color>
 </resources>

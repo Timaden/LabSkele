@@ -10,4 +10,4 @@
     android:paddingRight="16dp"
     android:paddingBottom="2dp"
     android:textColor="@android:color/background_light"
-    android:textSize="36sp" />
+    android:textSize="40sp" />

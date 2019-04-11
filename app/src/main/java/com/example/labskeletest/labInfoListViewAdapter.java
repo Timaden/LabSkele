@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class popupListViewAdapter extends BaseAdapter {
+public class labInfoListViewAdapter extends BaseAdapter {
 
     private Context context; //context
     private ArrayList<String> items; //data source of the list adapter
 
     //public constructor
-    public popupListViewAdapter(Context context, ArrayList<String> items) {
+    public labInfoListViewAdapter(Context context, ArrayList<String> items) {
         this.context = context;
         this.items = items;
     }
