@@ -3,7 +3,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/mapParent"
     tools:context=".Map">
+
+    <Button
+        android:layout_marginTop="75dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentRight="true"
+        android:background="#003366"
+        android:id="@+id/theme1"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+
+    <Button
+        android:layout_marginBottom="10dp"
+        android:id="@+id/theme2"
+        android:background="#e4d8b4"
+        android:layout_marginRight="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/theme1"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+
+
+    <Button
+        android:layout_marginBottom="10dp"
+        android:id="@+id/theme3"
+        android:background="#85bb65"
+        android:layout_marginRight="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/theme2"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+
+    <Button
+        android:id="@+id/theme4"
+        android:background="#ca8d16"
+        android:layout_marginRight="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/theme3"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"

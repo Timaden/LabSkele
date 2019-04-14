@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp">
+    <View
+        android:layout_marginVertical="15dp"
+        android:id="@+id/div1"
+        android:layout_marginBottom="15dp"
+        android:background="@color/colorGeorgiaSouthernGold"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"/>
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/distance"
+        android:textColor="#f7f7f7"
+        android:text="distance(m)"
+        android:id="@+id/distanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_marginVertical="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/cancelRouteBtn"
+        android:textColor="#f7f7f7"
+        android:text="50m"
+        android:id="@+id/distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/cancelRouteBtn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:scaleY="0.7"
+        android:scaleX="0.7"
+        android:textColor="#f7f7f7f7"
+        android:textAllCaps="false"
+        android:text="cancel"
+        android:background="#ffff0000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>

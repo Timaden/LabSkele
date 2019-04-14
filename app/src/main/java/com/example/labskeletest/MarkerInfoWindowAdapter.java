@@ -37,14 +37,11 @@ public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         View v = inflater.inflate(R.layout.map_lab_marker_info_window , null);
         LatLng latLng = marker.getPosition();
         TextView bldgName = v.findViewById(R.id.bldgName);
-        TextView bldgAddress = v.findViewById(R.id.bldgAddress);
-        TextView bldgPhoneNo = v.findViewById(R.id.bldgPhNo);
         TextView noOfLabs = v.findViewById(R.id.noOfLabs);
         TextView available = v.findViewById(R.id.available);
 
         bldgName.setText(b.getBldgName());
-        bldgAddress.setText(b.getAddress());
-        bldgPhoneNo.setText(b.getPhoneNumber());
+
         noOfLabs.setText(Integer.toString(b.getNoOfLabs()));
         if(b.isOneLabFree()){
             available.setBackgroundColor(Color.GREEN);
