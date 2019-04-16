@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,6 +32,22 @@ public class MainActivity extends AppCompatActivity implements Favorites.OnFragm
     public static int queries = 0;
     public static int labs = 0;
     public static databaseHelper databaseHelper;
+    private static Context context;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(getApplicationContext(),"Getting Up-To-Date Data",Toast.LENGTH_LONG).show();
+        setData();
+    }
+
+    public static void setData() {
+        databaseHelper = new databaseHelper(context);
+        listOfLabsCOBA.clear();
+        listOfLabsCEIT.clear();
+        populateLabList("CEIT");
+        populateLabList("COBA");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements Favorites.OnFragm
         setContentView(R.layout.activity_main);
 
 
-        Context context = getApplicationContext();
+        context = getApplicationContext();
 
         if(uniqueID == null){
             SharedPreferences sharedPrefs = context.getSharedPreferences(PREF_UNIQUE_ID, Context.MODE_PRIVATE);
@@ -58,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements Favorites.OnFragm
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         System.out.println("Time stamp before: " + timestamp);
 
-        databaseHelper = new databaseHelper(this);
-        populateLabList("CEIT");
-        populateLabList("COBA");
+//        databaseHelper = new databaseHelper(this);
+//        populateLabList("CEIT");
+//        populateLabList("COBA");
 
         timestamp = new Timestamp(System.currentTimeMillis());
         System.out.println("Time stamp after: " + timestamp);

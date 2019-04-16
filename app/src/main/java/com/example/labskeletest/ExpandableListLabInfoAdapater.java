@@ -78,7 +78,7 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.listview_textview, null);
-        //}
+        }//
         System.out.println("Header Title: " + headerTitle + " Group Position: " + groupPosition);
 
         TextView listLabel = (TextView) view.findViewById(R.id.lvHeaders);
@@ -96,7 +96,7 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
 //                    }
 //                });
 //            }
-    }//
+    //}//
         return view;
 
     }
@@ -192,23 +192,30 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
 
         Calendar currentTime = Calendar.getInstance();
         boolean classInSession = lab.checkClassInSession(currentTime);
+        boolean buildingOpen = lab.checkBuildingOpen(currentTime);
         TextView classInSessionTV = view.findViewById(R.id.tvLabSched2);
-        if(classInSession == true){
-            classInSessionTV.setText("IN CLASS");    /*"Status: IN USE!"*/
-            classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorRed));
-        }
-        else {
-            System.out.println(lab.getRoom());
-            if (lab.getRoom().equals("CEIT2551202") || lab.getRoom().equals("CEIT2551204")) {
-                System.out.println("lab is 1202 or 1204");
-                classInSessionTV.setText("EAGLE LAB");      /*"Status: OPEN!"*/
-                classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+        if(buildingOpen == true) {
+            if (classInSession == true) {
+                classInSessionTV.setText("IN CLASS");    /*"Status: IN USE!"*/
+                classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorRed));
             } else {
+                System.out.println(lab.getRoom());
+                if (lab.getRoom().equals("CEIT2551202") || lab.getRoom().equals("CEIT2551204")) {
+                    System.out.println("lab is 1202 or 1204");
+                    classInSessionTV.setText("EAGLE LAB");      /*"Status: OPEN!"*/
+                    classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+                } else {
 
-            classInSessionTV.setText("OPEN");      /*"Status: OPEN!"*/
-            classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+                    classInSessionTV.setText("OPEN");      /*"Status: OPEN!"*/
+                    classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorGreen));
+                }
             }
-        }
+        }else{
+        classInSessionTV.setText("CLOSED");        /*"Status: IN USE!"*/
+        classInSessionTV.setTextColor(context.getResources().getColor(R.color.colorRed));
+        percentLabel.setText("--/--");
+        percentLabel.setTextColor(context.getResources().getColor(R.color.colorWhite));
+    }
     }
 
     @Override
@@ -275,7 +282,7 @@ public class ExpandableListLabInfoAdapater extends BaseExpandableListAdapter {
         view.setBackgroundColor(context.getResources().getColor(R.color.colorGeorgiaSouthernGold));
         return view;
     }
-    private void labSoftwareClicked(View view, Lab lab){
+    public void labSoftwareClicked(View view, Lab lab){
         System.out.println("Software CLicked");
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         ArrayList<String> softwareList = lab.getSoftware();

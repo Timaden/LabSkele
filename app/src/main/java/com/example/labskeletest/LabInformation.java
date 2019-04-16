@@ -8,9 +8,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -57,7 +62,42 @@ public class LabInformation extends AppCompatActivity {
         initData();
         listAdapter = new ExpandableListLabInfoAdapater(this, listBuildingHeader, listHashMap, lab);
         listView.setAdapter(listAdapter);
+//        onBackPressed();
+        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 
+                if (groupPosition == 4) {
+
+                    listAdapter.labSoftwareClicked(v,lab);
+
+                    parent.collapseGroup(groupPosition);
+                    //parent.setOnGroupClickListener(new );
+                    System.out.println("CLOSED");
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //Include the code here
+        System.out.println("back button pressed");
+        TextView tv = (TextView) findViewById(R.id.testBackButtonPressed);
+        tv.setVisibility(View.VISIBLE);
+        tv.setText("Updating Labs...");
+
+//        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+//        final View addListItemView = (View) inflater.inflate(R.layout.loading_data_popup,null);
+//        final PopupWindow mPopupWindow = new PopupWindow(addListItemView, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+//
+//        mPopupWindow.setFocusable(true);
+//        mPopupWindow.showAtLocation(findViewById(R.id.labInfoConstraintView), Gravity.CENTER,0,0);
+        // Toast.makeText(getApplicationContext(),"Getting Up-To-Date Data",Toast.LENGTH_LONG).show();
+
+       // Toast.makeText(getApplicationContext(),"Getting Up-To-Date Data",Toast.LENGTH_LONG).show();
     }
 
 
@@ -66,11 +106,11 @@ public class LabInformation extends AppCompatActivity {
         listHashMap = new HashMap<String, java.util.List<String>>();
         listBuildingHeader = new ArrayList<>();
 
-        listBuildingHeader.add("Lab " + passedLab);
+        listBuildingHeader.add("Lab " + passedLab + ":");
         ArrayList<String> listLabHeader = populateLabHeader();
         listHashMap.put(listBuildingHeader.get(0), listLabHeader);
 
-        listBuildingHeader.add("Occupancy");
+        listBuildingHeader.add("Occupancy:");
         ArrayList<String> listOccupancy = populateLabList(listBuildingHeader.get(1));
         listHashMap.put(listBuildingHeader.get(1), listOccupancy);
 
@@ -89,7 +129,10 @@ public class LabInformation extends AppCompatActivity {
 
     public ArrayList<String> populateSoftware() {
 
-        ArrayList<String> softwareList = lab.getSoftware();
+        //ArrayList<String> softwareList = lab.getSoftware();
+        ArrayList<String> softwareList = new ArrayList<>();
+        softwareList.add(" ");
+
         return softwareList;
     }
 
@@ -197,7 +240,7 @@ public class LabInformation extends AppCompatActivity {
         }
         else if (lab.getRoom().contains("COBA")){
             listOfHeader.add("COBA Building Hours:");
-            listOfHeader.add("M - TR: 7:30 am - 9:00 pm");
+            listOfHeader.add("M - F: 7:30 am - 9:00 pm");
             listOfHeader.add("Sat - Sun: CLOSED");
         }
         return listOfHeader;

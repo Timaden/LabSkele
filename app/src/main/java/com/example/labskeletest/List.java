@@ -11,6 +11,7 @@ import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -43,6 +44,10 @@ public class List extends Fragment  {
     DBConfiguration dbc = new DBConfiguration();
     DBAccess dba = new DBAccess();
     ResultSet computersRS;
+
+
+
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -125,6 +130,14 @@ public class List extends Fragment  {
         listAdapter = new ExpandableListAdapter(getActivity(), listBuildingHeader, listHashMap);
         listView.setAdapter(listAdapter);
 
+        Button refreshBtn = inflatedView.findViewById(R.id.refreshDataButton);
+        refreshBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.setData();
+                listAdapter.notifyDataSetChanged();
+            }
+        });
 
         return inflatedView;
         //return inflater.inflate(R.layout.fragment_list, container, false);

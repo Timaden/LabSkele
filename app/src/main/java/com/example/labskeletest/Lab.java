@@ -53,6 +53,11 @@ public class Lab implements Serializable {
         }
         data = MainActivity.databaseHelper.getSoftware(room);
         while(data.moveToNext()){
+            if(data.getString(0).equals("Accessibility") || data.getString(0).equals("Accessories") ||
+                    data.getString(0).equals("Administrative Tools") || data.getString(0).equals("Maintenance") ||
+                    data.getString(0).equals("System Tools") || data.getString(0).equals("x264vfw64")){
+                continue;
+            }
             softwareList.add(data.getString(0));
         }
         data = MainActivity.databaseHelper.getClassTimes(room);
@@ -188,6 +193,152 @@ public class Lab implements Serializable {
                         long differenceInMinutes = endTime.getTime() - startTime.getTime();
                         differenceInMinutes= differenceInMinutes/  (60 * 1000) % 60;
 
+                        return true;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+    public boolean checkBuildingOpen(Calendar currentTime) {
+        int day = currentTime.get(Calendar.DAY_OF_WEEK);
+        String day_of_week = "";
+        switch (day) {
+            case Calendar.SUNDAY:
+                day_of_week = "S";
+                break;
+            case Calendar.MONDAY:
+                day_of_week = "M";
+            case Calendar.TUESDAY:
+                day_of_week = "T";
+                break;
+            case Calendar.WEDNESDAY:
+                day_of_week = "W";
+                break;
+            case Calendar.THURSDAY:
+                day_of_week = "R";
+                break;
+            case Calendar.FRIDAY:
+                day_of_week = "F";
+                break;
+            case Calendar.SATURDAY:
+                day_of_week = "S";
+                break;
+        }
+        ArrayList<String> buildingStart = new ArrayList<>();
+        ArrayList<String> buildingClose = new ArrayList<>();
+        ArrayList<String> buildingDays = new ArrayList<>();
+        if(this.getRoom().contains("CEIT")){
+            buildingStart.add("07:00a");
+            buildingStart.add("07:00a");
+            buildingStart.add("07:00a");
+            buildingStart.add("07:00a");
+            buildingStart.add("07:00a");
+            buildingStart.add("02:00p");
+            buildingStart.add("02:00p");
+
+            buildingClose.add("11:59p");
+            buildingClose.add("11:59p");
+            buildingClose.add("11:59p");
+            buildingClose.add("11:59p");
+            buildingClose.add("10:00p");
+            buildingClose.add("10:00p");
+            buildingClose.add("11:59p");
+
+            buildingDays.add("M");
+            buildingDays.add("T");
+            buildingDays.add("W");
+            buildingDays.add("T");
+            buildingDays.add("F");
+            buildingDays.add("Sat");
+            buildingDays.add("Sun");
+
+        }
+        else if(this.getRoom().contains("COBA")){
+
+            buildingStart.add("07:30a");
+            buildingStart.add("07:30a");
+            buildingStart.add("07:30a");
+            buildingStart.add("07:30a");
+            buildingStart.add("07:30a");
+
+
+            buildingClose.add("09:00p");
+            buildingClose.add("09:00p");
+            buildingClose.add("09:00p");
+            buildingClose.add("09:00p");
+            buildingClose.add("09:00p");
+
+
+            buildingDays.add("M");
+            buildingDays.add("T");
+            buildingDays.add("W");
+            buildingDays.add("T");
+            buildingDays.add("F");
+
+
+        }
+
+
+        for (int i = 0; i < buildingStart.size(); i++) {
+            if (buildingDays.get(i).contains(day_of_week)) {
+                try {
+
+                    String trimmedStart = buildingStart.get(i).substring(0, buildingStart.get(i).length() - 1);
+                    String ampmStart = buildingStart.get(i).substring(buildingStart.get(i).length() - 1, buildingStart.get(i).length());
+
+                    String trimmedEnd = buildingClose.get(i).substring(0, buildingClose.get(i).length() - 1);
+                    String ampmEnd = buildingClose.get(i).substring(buildingClose.get(i).length() - 1, buildingClose.get(i).length());
+
+                    if (ampmStart.equals("p")) {
+//                    System.out.println("Before + 12 " + trimmedStart);
+                        String firstTwo = trimmedStart.substring(0, 2);
+                        int firstTwoNum = Integer.parseInt(firstTwo);
+                        if (firstTwoNum != 12) {
+                            firstTwoNum = firstTwoNum + 12;
+                            String parsed = String.valueOf(firstTwoNum);
+                            trimmedStart = parsed + trimmedStart.substring(2);
+//                        System.out.println("After + 12 " + trimmedStart);
+                        }
+                    }
+                    if (ampmEnd.equals("p")) {
+//                    System.out.println("Before + 12 " + trimmedEnd);
+                        String firstTwo = trimmedEnd.substring(0, 2);
+                        int firstTwoNum = Integer.parseInt(firstTwo);
+                        if (firstTwoNum != 12) {
+                            firstTwoNum = firstTwoNum + 12;
+                            String parsed = String.valueOf(firstTwoNum);
+                            trimmedEnd = parsed + trimmedEnd.substring(2);
+//                        System.out.println("After + 12 " + trimmedEnd);
+                        }
+                    }
+                    Date startTime = new SimpleDateFormat("HH:mm").parse(trimmedStart);
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.setTime(startTime);
+
+
+                    Date endTime = new SimpleDateFormat("HH:mm").parse(trimmedEnd);
+                    Calendar calendar2 = Calendar.getInstance();
+                    calendar2.setTime(endTime);
+
+                    //String currentTimeStringTest = new SimpleDateFormat("HH:mm").format("22:55");
+                    String currentTimeStringTest = new SimpleDateFormat("HH:mm").format(new Date());
+
+                    Date checkTime = new SimpleDateFormat("HH:mm").parse(currentTimeStringTest);
+                    Calendar calendar3 = Calendar.getInstance();
+                    calendar3.setTime(checkTime);
+
+                    if (endTime.compareTo(startTime) < 0) {
+                        calendar2.add(Calendar.DATE, 1);
+                        calendar3.add(Calendar.DATE, 1);
+                    }
+
+                    java.util.Date actualTime = calendar3.getTime();
+                    if ((actualTime.after(calendar1.getTime()) ||
+                            actualTime.compareTo(calendar1.getTime()) == 0) &&
+                            actualTime.before(calendar2.getTime())) {
                         return true;
                     }
                 } catch (ParseException e) {
