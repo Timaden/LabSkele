@@ -167,7 +167,9 @@ public class Map extends Fragment implements LocationListener{
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        route = mMap.addPolyline(new PolylineOptions().addAll(decodedPath).width(16).color(Color.parseColor(lineColor)));
+                        if(route != null) {
+                            route = mMap.addPolyline(new PolylineOptions().addAll(decodedPath).width(16).color(Color.parseColor(lineColor)));
+                        }
 
                     }
 
